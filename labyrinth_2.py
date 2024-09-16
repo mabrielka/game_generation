@@ -13,6 +13,8 @@ KOEFF_smoothing = 4
 KOEFF_num_сellular_automaton = 3
 # количество клеток которые должны окружать стену чтобы она стала полом
 KOEFF_сellular_automaton = 4
+# массив с высотой и шириной карт при каждом уровне, но сейчас настроено как для 1 эл-та
+level_size = [[64, 64]]
 
 def terminate():
     pygame.quit()
@@ -70,10 +72,10 @@ class Player(pygame.sprite.Sprite):
         self.x = pos_x
         self.y = pos_y
 
-    def update(self, x, y):
+    def update(self, x, y, n, m):
         dx = x // tile_width
         dy = y // tile_height
-        if 0 <= self.rect.y + y < 85 * 16 and 0 <= self.rect.x + x < 50 * 16 and \
+        if 0 <= self.rect.y + y < m * tile_height and 0 <= self.rect.x + x < n * tile_height and \
                 level_map[(self.rect.y + y) // tile_height][(self.rect.x + x) // tile_width] in ('.', '@'):
             self.rect = self.rect.move(x, y)
             self.x += dx
@@ -221,8 +223,6 @@ def generate_level(level):
                 new_player = Player(x, y)
     return new_player, x, y
 
-level_size = [[64, 64]]
-
 for level in range(10):
     load_music('labyrinth_1_music.ogg')
     screen.fill((255, 255, 255))
@@ -236,13 +236,13 @@ for level in range(10):
                 run = False
             key = pygame.key.get_pressed()
             if key[pygame.K_DOWN]:
-                player.update(0, tile_height)
+                player.update(0, tile_height, N, M)
             if key[pygame.K_UP]:
-                player.update(0, -tile_height)
+                player.update(0, -tile_height, N, M)
             if key[pygame.K_LEFT]:
-                player.update(-tile_width, 0)
+                player.update(-tile_width, 0, N, M)
             if key[pygame.K_RIGHT]:
-                player.update(tile_width, 0)\
+                player.update(tile_width, 0, N, M)
             # выход при нажатии esc
             if key[pygame.K_ESCAPE]:
                 run = False
